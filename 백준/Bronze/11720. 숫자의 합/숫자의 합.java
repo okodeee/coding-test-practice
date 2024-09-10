@@ -1,25 +1,20 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 
-public class Main {
-    public static void main(String[] args) throws IOException {
+public class Main{
+    public static void main(String[] args)throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        int N = Integer.parseInt(br.readLine());
+        br.readLine();  // n은 쓸모가 없으므로 입력만 받음
+        int sum = 0;
 
-        String number = br.readLine();
-
-        int result = 0;
-        for(int i = 0; i < number.length(); i++) {
-            /**
-             * 여기서 주의해야할 점은 String.valueOf(number.charAt(i))를 사용해야 하지
-             * (int)number.charAt(i);를 사용해버리면 해당 char값을 아스키 코드 값으로 변경하여 48~ 부터 시작하는 값으로 변경되어 버린다.
-             */
-            int num = Integer.parseInt(String.valueOf(number.charAt(i)));
-            result += num;
+        /* getBytes
+         * String에 대하여 해당 문자열을 하나의 byte 배열로 변환해주는 메소드
+         * 이 때, 변환되는 방법은 Charset 에서 사용되는 인코딩 방식, 즉 UTF-16 인코딩으로 변경되는 값을 따름
+         */
+        for (byte value : br.readLine().getBytes()) {   // for-each 구문
+            sum += (value - '0');   // 또는 (value - 48) :: 문자 -> 숫자
         }
 
-        System.out.println(result);
+        System.out.println(sum);
     }
 }
