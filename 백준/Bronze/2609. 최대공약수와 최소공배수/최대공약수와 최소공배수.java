@@ -6,12 +6,16 @@ import java.util.StringTokenizer;
  */
 
 public class Main{
-    
-    // 최대공약수 재귀 방식
+
+    // 최대공약수 반복문 방식
     public static int gcd(int a, int b){
-        if (b == 0) return a;
-        // gcd(a, b) == gcd(b, r)
-        return gcd(b, a % b);
+        int r;
+        while(b > 0) {
+            r = a % b;
+            a = b;
+            b = r;
+        }
+        return a;
     }
 
     public static void main(String[] args)throws IOException {
