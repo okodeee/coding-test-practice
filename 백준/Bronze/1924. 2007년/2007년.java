@@ -12,13 +12,12 @@ public class Main{
         int x = Integer.parseInt(st.nextToken());
         int y = Integer.parseInt(st.nextToken());
 
-        int dif_days = 0;
-        for(int i = 1; i < x; i++){
-            dif_days += months[i];
+        int n = 0;  // 지난 일수
+        for(int i = 1; i < x; i++){ // 해당 전월까지의 일수
+            n += months[i];
         }
-        dif_days += (y - 1);
+        n += (y - 1);   // 해당 월의 일수
 
-        int dif = dif_days % 7;
-        System.out.println(days[dif]);
+        System.out.println(days[n % 7]);
     }
 }
