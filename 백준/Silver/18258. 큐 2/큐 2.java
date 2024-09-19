@@ -1,54 +1,44 @@
 import java.io.*;
-import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Queue;
+import java.util.StringTokenizer;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-        LinkedList<Integer> queue = new LinkedList<>();
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int N = Integer.parseInt(br.readLine());
+
+        Queue<Integer> queue = new LinkedList<>();
+        String command;
         StringBuilder sb = new StringBuilder();
-        int N = Integer.parseInt(bf.readLine());
-        for(int i=0; i<N; i++) {
-            String[] command = bf.readLine().split(" ");
-            switch (command[0]) {
-                case "push":
-                    queue.add(Integer.parseInt(command[1]));
-                    break;
+        int back = 0;
+        for (int i = 0; i < N; i++) {
+            command = br.readLine();
+            switch (command) {
                 case "pop":
-                    if (queue.size() == 0) {
-                        sb.append(-1).append("\n");
-                    } else {
-                        int temp = queue.get(0);
-                        queue.remove(queue.get(0));
-                        sb.append(temp).append("\n");
-                    }
+                    // poll은 가장 앞에 있는 요소를 삭제하며 삭제할 원소가 없을 경우 null 반환
+                    sb.append(queue.isEmpty() ? -1 : queue.poll()).append('\n');
                     break;
                 case "size":
-                    sb.append(queue.size()).append("\n");
+                    sb.append(queue.size()).append('\n');
                     break;
                 case "empty":
-                    if (queue.size() == 0) {
-                        sb.append(1).append("\n");
-                    } else {
-                        sb.append(0).append("\n");
-                    }
+                    sb.append(queue.isEmpty() ? 1 : 0).append('\n');
                     break;
                 case "front":
-                    if (queue.size() == 0) {
-                        sb.append(-1).append("\n");
-                    } else {
-                        sb.append(queue.get(0)).append("\n");
-                    }
+                    // peek()은 큐에 꺼낼 요소가 없을 경우 null 반환
+                    sb.append(queue.isEmpty() ? -1 : queue.peek()).append('\n');
                     break;
                 case "back":
-                    if (queue.size() == 0) {
-                        sb.append(-1).append("\n");
-                    } else {
-                        sb.append(queue.get(queue.size() - 1)).append("\n");
-                    }
+                    sb.append(queue.isEmpty() ? -1 : back).append('\n');
                     break;
+                default:    // push X
+                    StringTokenizer st = new StringTokenizer(command);
+                    st.nextToken();
+                    back = Integer.parseInt(st.nextToken());
+                    queue.add(back);
             }
         }
-        System.out.println(sb);
+        System.out.print(sb);
     }
 }
