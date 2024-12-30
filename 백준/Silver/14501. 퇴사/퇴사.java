@@ -1,17 +1,22 @@
-import java.util.Scanner;
+import java.io.*;
+import java.util.StringTokenizer;
 
 public class Main {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        int N = sc.nextInt();
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+
+        int N = Integer.parseInt(st.nextToken()); // 남은 일 수
         int[] T = new int[N + 1];
         int[] P = new int[N + 1];
-        int[] dp = new int[N + 2];
 
         for (int i = 1; i <= N; i++) {
-            T[i] = sc.nextInt();
-            P[i] = sc.nextInt();
+            st = new StringTokenizer(br.readLine());
+            T[i] = Integer.parseInt(st.nextToken()); // 상담 기간
+            P[i] = Integer.parseInt(st.nextToken()); // 금액
         }
+
+        int[] dp = new int[N + 2]; // N+1 을 참조하기 때문에
 
         for (int i = N; i > 0; i--) {
             if (i + T[i] <= N + 1) {
@@ -22,6 +27,5 @@ public class Main {
         }
 
         System.out.println(dp[1]);
-        sc.close();
     }
 }
