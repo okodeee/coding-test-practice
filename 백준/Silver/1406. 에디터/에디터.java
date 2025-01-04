@@ -1,98 +1,48 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.IOException;
+import java.io.*;
+import java.util.LinkedList;
+import java.util.ListIterator;
 
 public class Main {
-    static char[] data;
-    static int[] prev, next;
-    static int cursor;
-    static int currentIndex;
-    static final int MAX_LENGTH = 600_001;
-
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
-        String initialString = br.readLine();
-        int commandCount = Integer.parseInt(br.readLine());
-
-        data = new char[MAX_LENGTH];
-        prev = new int[MAX_LENGTH];
-        next = new int[MAX_LENGTH];
-
-        cursor = 0;
-        currentIndex = 1;
-
-        prev[0] = -1;
-        next[0] = -1;
-
-        for (char c : initialString.toCharArray()) {
-            insert(c);
+        String str = br.readLine();
+        LinkedList<Character> list = new LinkedList<Character>();
+        for (int i = 0; i < str.length(); i++) {
+            list.add(str.charAt(i));
         }
 
-        for (int i = 0; i < commandCount; i++) {
-            String command = br.readLine();
-            char cmdType = command.charAt(0);
+        int M = Integer.parseInt(br.readLine());
 
-            switch (cmdType) {
-                case 'L':
-                    if (prev[cursor] != -1) {
-                        cursor = prev[cursor];
+        // Iterator 메소드 호출
+        ListIterator<Character> iter = list.listIterator();
+        // 처음 커서의 위치는 맨 뒤
+        while(iter.hasNext()) {
+            iter.next();
+        }
+
+        String command;
+        for (int i = 0; i < M; i++) {
+            command = br.readLine();
+            switch (command) {
+                case "L":   // 커서를 왼쪽으로 한 칸 옮김 (커서가 문장의 맨 앞이면 무시됨)
+                    if (iter.hasPrevious()) iter.previous();
+                    break;
+                case "D":   // 커서를 오른쪽으로 한 칸 옮김 (커서가 문장의 맨 뒤이면 무시됨)
+                    if (iter.hasNext()) iter.next();
+                    break;
+                case "B":   // 커서 왼쪽에 있는 문자를 삭제함 (커서가 문장의 맨 앞이면 무시됨)
+                    if (iter.hasPrevious()) {
+                        iter.previous();
+                        // remove()는 next()나 previous()에 의해 반환된 가장 마지막 요소를 리스트에서 제거
+                        iter.remove();
                     }
                     break;
-                case 'D':
-                    if (next[cursor] != -1) {
-                        cursor = next[cursor];
-                    }
-                    break;
-                case 'B':
-                    if (prev[cursor] != -1) {
-                        delete();
-                    }
-                    break;
-                case 'P':
-                    char ch = command.charAt(2);
-                    insert(ch);
-                    break;
+                default:    // P
+                    iter.add(command.charAt(2));    // cursor의 위치에 추가
             }
         }
-
-        StringBuilder result = new StringBuilder();
-        int index = next[0];
-        while (index != -1) {
-            result.append(data[index]);
-            index = next[index];
-        }
-
-        System.out.println(result);
-    }
-
-    static void insert(char ch) {
-        if (currentIndex >= MAX_LENGTH) {
-            return;
-        }
-        data[currentIndex] = ch;
-        prev[currentIndex] = cursor;
-        next[currentIndex] = next[cursor];
-
-        if (next[cursor] != -1) {
-            prev[next[cursor]] = currentIndex;
-        }
-
-        next[cursor] = currentIndex;
-        cursor = currentIndex;
-        currentIndex++;
-    }
-
-    static void delete() {
-        if (cursor == 0 || cursor >= currentIndex) {
-            return;
-        }
-        if (next[cursor] != -1) {
-            prev[next[cursor]] = prev[cursor];
-        }
-        if (prev[cursor] != -1) {
-            next[prev[cursor]] = next[cursor];
-        }
-        cursor = prev[cursor];
+        StringBuilder sb = new StringBuilder();
+        for ( char c : list) sb.append(c);
+        System.out.println(sb);
     }
 }
