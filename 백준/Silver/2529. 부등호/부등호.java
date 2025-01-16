@@ -14,9 +14,6 @@ public class Main {
     static char[] signs;
     static boolean[] isVisited; // 방문 여부 확인
     static List<String> results = new ArrayList<>(); // 모든 결과를 저장
-    static int[] sequence;
-    static int maxSequence = Integer.MIN_VALUE;
-    static int minSequence = Integer.MAX_VALUE;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
