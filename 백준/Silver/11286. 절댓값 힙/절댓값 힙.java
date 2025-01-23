@@ -1,12 +1,25 @@
 import java.io.*;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.PriorityQueue;
 
 public class Main {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        PriorityQueue<Integer> posQueue = new PriorityQueue<>();
-        PriorityQueue<Integer> negQueue = new PriorityQueue<>(Collections.reverseOrder());
+        PriorityQueue<Integer> queue = new PriorityQueue<Integer>(new Comparator<Integer>() {
+            @Override
+            public int compare(Integer o1, Integer o2) {
+                //절대값 기준으로 앞 값이 더 크다면 자리를 바꿔준다.
+                if(Math.abs(o1) > Math.abs(o2)) {
+                    return Math.abs(o1) - Math.abs(o2);
+                    //절대값 기준으로 두 값이 같다면 음수를 앞으로 보내준다.
+                }else if(Math.abs(o1) == Math.abs(o2)) {
+                    return o1 - o2;
+                }else {
+                    return -1;
+                }
+            }
+        });
+        StringBuilder sb = new StringBuilder();
 
         int N = Integer.parseInt(br.readLine());
 
@@ -14,26 +27,16 @@ public class Main {
             int val = Integer.parseInt(br.readLine());
 
             if (val == 0) {
-                if (negQueue.isEmpty() && posQueue.isEmpty()) {
-                    System.out.println("0");
-                } else if (negQueue.isEmpty()) {
-                    System.out.println(posQueue.poll());
-                } else if (posQueue.isEmpty()) {
-                    System.out.println(negQueue.poll());
+                if (queue.isEmpty()) {
+                    sb.append("0\n");
                 } else {
-                    if (posQueue.peek() < -negQueue.peek()) {
-                        System.out.println(posQueue.poll());
-                    } else {
-                        System.out.println(negQueue.poll());
-                    }
+                    sb.append(queue.poll()).append('\n');
                 }
             } else {
-                if ((val > 0)) {
-                    posQueue.add(val);
-                } else {
-                    negQueue.add(val);
-                }
+                queue.add(val);
             }
         }
+
+        System.out.println(sb);
     }
 }
