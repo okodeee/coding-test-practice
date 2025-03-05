@@ -1,7 +1,7 @@
 import java.io.*;
 import java.util.*;
 
-// 엥 존나 쉬움 걍 시간 짧게 걸리는 순으로
+// 엥 쉬움 걍 시간 짧게 걸리는 순으로
 public class Main {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
