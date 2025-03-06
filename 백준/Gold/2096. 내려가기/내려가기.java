@@ -1,48 +1,79 @@
 import java.io.*;
 import java.util.*;
 
-/*
- * 메모리 초과 원인 분석
- * maxScore[N+1][4], minScore[N+1][4] 배열을 선언 → O(N) 메모리 사용
- * 이전 행만 있으면 현재 행을 계산할 수 있음! (O(1) 공간만 필요)
- * 이전 행의 정보만 유지하면 되므로, 1차원 배열(크기 3)만 사용하면 됨!
- */
 public class Main {
+    static int[][] score;
+    static int[][] maxScore;
+    static int[][] minScore;
+
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int N = Integer.parseInt(br.readLine());
 
-        int[] maxPrev = new int[3]; // 이전 행의 최대값
-        int[] minPrev = new int[3]; // 이전 행의 최소값
-        int[] maxCurr = new int[3]; // 현재 행의 최대값
-        int[] minCurr = new int[3]; // 현재 행의 최소값
+        score = new int[N + 1][4];
+        maxScore = new int[N + 1][4];
+        minScore = new int[N + 1][4];
 
-        StringTokenizer st = new StringTokenizer(br.readLine());
-        for (int i = 0; i < 3; i++) {
-            maxPrev[i] = minPrev[i] = Integer.parseInt(st.nextToken());
-        }
-
-        for (int i = 2; i <= N; i++) {
+        StringTokenizer st;
+        for (int i = 1; i <= N; i++) {
             st = new StringTokenizer(br.readLine());
-            int a = Integer.parseInt(st.nextToken());
-            int b = Integer.parseInt(st.nextToken());
-            int c = Integer.parseInt(st.nextToken());
-
-            maxCurr[0] = Math.max(maxPrev[0], maxPrev[1]) + a;
-            maxCurr[1] = Math.max(Math.max(maxPrev[0], maxPrev[1]), maxPrev[2]) + b;
-            maxCurr[2] = Math.max(maxPrev[1], maxPrev[2]) + c;
-
-            minCurr[0] = Math.min(minPrev[0], minPrev[1]) + a;
-            minCurr[1] = Math.min(Math.min(minPrev[0], minPrev[1]), minPrev[2]) + b;
-            minCurr[2] = Math.min(minPrev[1], minPrev[2]) + c;
-
-            // 이전 행을 현재 행으로 갱신
-            System.arraycopy(maxCurr, 0, maxPrev, 0, 3);
-            System.arraycopy(minCurr, 0, minPrev, 0, 3);
+            for (int j = 1; j < 4; j++) {
+                score[i][j] = Integer.parseInt(st.nextToken());
+            }
         }
 
-        int maxResult = Math.max(Math.max(maxPrev[0], maxPrev[1]), maxPrev[2]);
-        int minResult = Math.min(Math.min(minPrev[0], minPrev[1]), minPrev[2]);
+        maxScore[1][1] = score[1][1];
+        maxScore[1][2] = score[1][2];
+        maxScore[1][3] = score[1][3];
+        for (int i = 2; i <= N; i++) {
+            if (maxScore[i-1][1] >= maxScore[i-1][2]) {
+                maxScore[i][1] = maxScore[i-1][1] + score[i][1];
+            } else {
+                maxScore[i][1] = maxScore[i-1][2] + score[i][1];
+            }
+
+            if (maxScore[i-1][1] >= maxScore[i-1][2] && maxScore[i-1][1] >= maxScore[i-1][3]) {
+                maxScore[i][2] = maxScore[i-1][1] + score[i][2];
+            } else if (maxScore[i-1][2] >= maxScore[i-1][1] && maxScore[i-1][2] >= maxScore[i-1][3]) {
+                maxScore[i][2] = maxScore[i-1][2] + score[i][2];
+            } else {
+                maxScore[i][2] = maxScore[i-1][3] + score[i][2];
+            }
+
+            if (maxScore[i-1][3] >= maxScore[i-1][2]) {
+                maxScore[i][3] = maxScore[i-1][3] + score[i][3];
+            } else {
+                maxScore[i][3] = maxScore[i-1][2] + score[i][3];
+            }
+        }
+
+        minScore[1][1] = score[1][1];
+        minScore[1][2] = score[1][2];
+        minScore[1][3] = score[1][3];
+        for (int i = 2; i <= N; i++) {
+            if (minScore[i-1][1] <= minScore[i-1][2]) {
+                minScore[i][1] = minScore[i-1][1] + score[i][1];
+            } else {
+                minScore[i][1] = minScore[i-1][2] + score[i][1];
+            }
+
+            if (minScore[i-1][1] <= minScore[i-1][2] && minScore[i-1][1] <= minScore[i-1][3]) {
+                minScore[i][2] = minScore[i-1][1] + score[i][2];
+            } else if (minScore[i-1][2] <= minScore[i-1][1] && minScore[i-1][2] <= minScore[i-1][3]) {
+                minScore[i][2] = minScore[i-1][2] + score[i][2];
+            } else {
+                minScore[i][2] = minScore[i-1][3] + score[i][2];
+            }
+
+            if (minScore[i-1][3] <= minScore[i-1][2]) {
+                minScore[i][3] = minScore[i-1][3] + score[i][3];
+            } else {
+                minScore[i][3] = minScore[i-1][2] + score[i][3];
+            }
+        }
+
+        int maxResult = Math.max(Math.max(maxScore[N][1], maxScore[N][2]), maxScore[N][3]);
+        int minResult = Math.min(Math.min(minScore[N][1], minScore[N][2]), minScore[N][3]);
         System.out.println(maxResult + " " + minResult);
     }
 }
