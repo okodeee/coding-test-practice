@@ -1,8 +1,10 @@
 import java.io.*;
 import java.util.*;
 
+// 불필요한 a+50 변환 제거 (0 <= a, b, c <= 20) 범위 조정
+// 배열 크기를 101x101x101 -> 21x21x21로 줄임
 public class Main {
-    static int[][][] memo = new int[101][101][101];
+    static int[][][] memo = new int[21][21][21];
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -16,30 +18,26 @@ public class Main {
 
             if (a == -1 && b == -1 && c == -1) break;
 
-            int aa = a + 50;
-            int bb = b + 50;
-            int cc = c + 50;
-
-            System.out.println("w(" + a + ", " + b + ", " + c + ") = " + dp(aa, bb, cc));
+            System.out.println("w(" + a + ", " + b + ", " + c + ") = " + w(a, b, c));
         }
 
     }
 
-    static int dp(int a, int b, int c) {
-        if (memo[a][b][c] != 0) return memo[a][b][c];
-
-        if (a <= 50 || b <= 50 || c <= 50) {
-            return memo[a][b][c] = 1;
+    static int w(int a, int b, int c) {
+        if (a <= 0 || b <= 0 || c <= 0) {
+            return 1;
         }
 
-        if (a > 70 || b > 70 || c > 70) {
-            return memo[a][b][c] = dp(70, 70, 70);
+        if (a > 20 || b > 20 || c > 20) {
+            return w(20, 20, 20);
         }
+
+        if (memo[a][b][c] != 0) return memo[a][b][c]; // 이미 계산된 값 반환
 
         if (a < b && b < c) {
-            return memo[a][b][c] = dp(a, b, c-1) + dp(a, b-1, c-1) - dp(a, b-1, c);
+            return memo[a][b][c] = w(a, b, c-1) + w(a, b-1, c-1) - w(a, b-1, c);
         }
 
-        return memo[a][b][c] = dp(a-1, b, c) + dp(a-1, b-1, c) + dp(a-1, b, c-1) - dp(a-1, b-1, c-1);
+        return memo[a][b][c] = w(a-1, b, c) + w(a-1, b-1, c) + w(a-1, b, c-1) - w(a-1, b-1, c-1);
     }
 }
