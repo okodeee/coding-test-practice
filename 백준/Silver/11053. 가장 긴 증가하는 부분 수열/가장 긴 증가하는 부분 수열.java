@@ -14,17 +14,15 @@ public class Main {
             A[i] = Integer.parseInt(st.nextToken());
         }
 
+        int max = Integer.MIN_VALUE;
         for (int i = 0; i < N; i++) {
             result[i] = 1;
             for (int j = 0; j < i; j++) {
                 if (A[i] > A[j] && result[i] < result[j] + 1) {
                     result[i] = result[j] + 1;
                 }
+                
             }
-        }
-
-        int max = Integer.MIN_VALUE;
-        for (int i = 0; i < N; i++) {
             max = Math.max(max, result[i]);
         }
 
