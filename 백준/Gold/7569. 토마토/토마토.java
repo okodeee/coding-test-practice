@@ -1,103 +1,74 @@
 import java.io.*;
 import java.util.*;
 
+/*
+ * 토마토
+ * 매 반복마다 Queue에서 꺼낸 위치에서 상하좌우 전파
+ * 날짜는 이전 좌표의 날짜 + 1로 기록
+ * BFS 종료 후, 모든 칸이 익었는지 확인, 날짜의 최댓값 구하기
+ */
 public class Main {
+    static int H, N, M;
+    static int[][][] tomatoes;
+    static int[] dx = {-1, 1, 0, 0, 0, 0};
+    static int[] dy = {0, 0, -1, 1, 0, 0};
+    static int[] dz = {0, 0, 0, 0, -1, 1};
+    static Queue<int[]> queue = new LinkedList<>();
 
-	static int inputX, inputY, inputZ;
-	static int[][][] arr;
-	static int[] dx = { 0, 0, -1, 1, 0, 0 }; // 상,하,좌,우, 앞,뒤
-	static int[] dy = { 1, -1, 0, 0, 0, 0 };
-	static int[] dz = { 0, 0, 0, 0, -1, 1 };
-	static Queue<point> qu = new LinkedList<>();
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-	static class point {
-		int x, y, z;
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        M = Integer.parseInt(st.nextToken());
+        N = Integer.parseInt(st.nextToken());
+        H = Integer.parseInt(st.nextToken());
 
-		point(int z, int x, int y) {
-			this.x = x;
-			this.y = y;
-			this.z = z;
-		}
-	}// class point
+        tomatoes = new int[H + 1][N + 1][M + 1];
+        for (int h = 1; h <= H; h++) {
+            for (int i = 1; i <= N; i++) {
+                st = new StringTokenizer(br.readLine());
+                for (int j = 1; j <= M; j++) {
+                    tomatoes[h][i][j] = Integer.parseInt(st.nextToken());
+                    if (tomatoes[h][i][j] == 1) {
+                        queue.offer(new int[]{h, i, j});
+                    }
+                }
+            }
+        }
 
-	public static void main(String[] args) throws IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		String[] str = br.readLine().split(" ");
-		inputY = Integer.parseInt(str[0]); // 가로
-		inputX = Integer.parseInt(str[1]); // 세로
-		inputZ = Integer.parseInt(str[2]); // 상자 수
+        bfs();
 
-		arr = new int[inputZ][inputX][inputY];
+        int result = 0;
+        for (int h = 1; h <= H; h++) {
+            for (int i = 1; i <= N; i++) {
+                for (int j = 1; j <= M; j++) {
+                    if (tomatoes[h][i][j] == 0) {
+                        System.out.println(-1);
+                        return;
+                    }
+                    result = Math.max(result, tomatoes[h][i][j]);
+                }
+            }
+        }
 
-		for (int k = 0; k < inputZ; k++) {
-			for (int i = 0; i < inputX; i++) {
-				String[] str1 = br.readLine().split(" ");
-				for (int j = 0; j < inputY; j++) {
-					arr[k][i][j] = Integer.parseInt(str1[j]);
-				}
-			}
-		}
+        System.out.println(result - 1); // 처음부터 익은 토마토는 0일이기 때문
+    }
 
-		for (int k = 0; k < inputZ; k++) {
-			for (int i = 0; i < inputX; i++) {
-				for (int j = 0; j < inputY; j++) {
-					if (arr[k][i][j] == 1) {
-						qu.add(new point(k, i, j));
+    static void bfs() {
+        while (!queue.isEmpty()) {
+            int[] current = queue.poll();
+            int z = current[0], x = current[1], y = current[2];
 
-					}
-				}
-			}
-		}
-		bfs();
-		checkTomato();
+            for (int i = 0; i < 6; i++) {
+                int nextZ = z + dz[i];
+                int nextX = x + dx[i];
+                int nextY = y + dy[i];
 
-	}// main()
-
-	static void bfs() {
-		while (!qu.isEmpty()) {
-			point tmp = qu.poll();
-			int tz = tmp.z;
-			int tx = tmp.x;
-			int ty = tmp.y;
-
-			for (int i = 0; i < 6; i++) {
-				int nx = tx + dx[i];
-				int ny = ty + dy[i];
-				int nz = tz + dz[i];
-
-				if (nx >= 0 && ny >= 0 && nz >= 0 && nx < inputX && ny < inputY && nz < inputZ) {
-					if (arr[nz][nx][ny] == 0) {
-						qu.add(new point(nz, nx, ny));
-						arr[nz][nx][ny] = arr[tz][tx][ty] + 1;
-					}
-				}
-
-			}
-
-		}
-	}// bfs()
-
-	static void checkTomato() {
-		int days=0;
-		
-		for (int k = 0; k < inputZ; k++) {
-			for (int i = 0; i < inputX; i++) {
-				for (int j = 0; j < inputY; j++) {
-					if (arr[k][i][j] == 0) {
-						System.out.println(-1);
-						return;
-					}
-					days = Math.max(days, arr[k][i][j]);
-				}
-			}
-		}
-
-		if (days == 1)
-			System.out.println(0);
-		else {
-			System.out.println(days - 1);
-		}
-
-	}// checkTomato()
-
+                if (nextZ > 0 && nextZ <= H && nextX > 0 && nextX <= N && nextY > 0 && nextY <= M && tomatoes[nextZ][nextX][nextY] == 0) {
+                    tomatoes[nextZ][nextX][nextY] = tomatoes[z][x][y] + 1;
+                    queue.offer(new int[]{nextZ, nextX, nextY});
+                }
+            }
+        }
+    }
 }
